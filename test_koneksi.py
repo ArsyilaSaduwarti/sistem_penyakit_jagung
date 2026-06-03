@@ -1,8 +1,10 @@
-from database.koneksi import get_connection
+import mysql.connector
 
-try:
-    conn = get_connection()
-    print("Koneksi database berhasil!")
-    conn.close()
-except Exception as e:
-    print("Error:", e)
+def get_connection():
+    conn = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="",
+        database="sistem_pakar_jagung"
+    )
+    return conn
