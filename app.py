@@ -12,7 +12,7 @@ st.set_page_config(
 # ─── Global CSS / Design System ────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght=300;400;500;600;700;800&display=swap');
 
 /* ── Reset & Base ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -184,7 +184,7 @@ h1, h2, h3, h4, h5, h6,
 }
 
 /* ══════════════════════════════════════════════
-   SELECTBOX / DROPDOWN  ← FIX UTAMA
+   SELECTBOX / DROPDOWN
    ══════════════════════════════════════════════ */
 /* Container selectbox */
 .stSelectbox > div > div {
@@ -242,7 +242,7 @@ li[role="option"][aria-selected="true"] {
 }
 
 /* ══════════════════════════════════════════════
-   RADIO BUTTON  ← LOGIN/REGISTER TOGGLE
+   RADIO BUTTON
    ══════════════════════════════════════════════ */
 .stRadio > div {
     background: #f8fafc !important;
@@ -378,13 +378,12 @@ if 'user_role' not in st.session_state:
 
 # ─── AUTH PAGE ─────────────────────────────────────────────
 def halaman_auth():
-    # Hero header
     st.markdown("""
     <div style="text-align:center; padding: 2.5rem 1rem 1.5rem;">
         <div style="font-size:4rem; margin-bottom:0.5rem;">🌽</div>
         <h1 style="font-size:2.2rem; background: linear-gradient(135deg, #15803d, #22c55e);
-                   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-                   background-clip: text; margin-bottom:0.4rem;">
+                    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+                    background-clip: text; margin-bottom:0.4rem;">
             Sistem Pakar Penyakit Jagung
         </h1>
         <p style="color:#64748b; font-size:1rem; font-family:'Poppins',sans-serif; font-weight:400;">
@@ -451,7 +450,6 @@ def halaman_auth():
 
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # Footer tagline
     st.markdown("""
     <div style="text-align:center; margin-top:2rem; color:#94a3b8; font-size:0.8rem; font-family:'Poppins',sans-serif;">
         Referensi: Mahyuni &amp; Munar (2021) · JACIS Vol.6 (2026) · SQUARE Vol.6
@@ -469,14 +467,14 @@ def render_sidebar():
             <div style="font-size:1.1rem; font-weight:700;">Penyakit Jagung</div>
         </div>
         <div style="background:rgba(255,255,255,0.12); border-radius:12px; padding:0.8rem 1rem; margin-bottom:1rem;">
-            <div style="font-size:0.72rem; opacity:0.7;">Pengguna aktif</div>
+            <div style="font-size:0.72rem; opacity:0.7;">Pengguna aktif (${st.session_state['user_role'].upper()})</div>
             <div style="font-weight:600; font-size:0.95rem;">👋 {st.session_state['user_nama']}</div>
         </div>
         """, unsafe_allow_html=True)
 
         if st.button("🚪 Log Out", type="secondary"):
             for key in ['logged_in', 'user_id', 'user_nama', 'user_role']:
-                st.session_state[key] = False if key == 'logged_in' else (None if key in ['user_id'] else "")
+                st.session_state[key] = False if key == 'logged_in' else (None if key in ['user_id'] else "user")
             st.rerun()
 
 
@@ -485,6 +483,8 @@ if not st.session_state['logged_in']:
     st.navigation([st.Page(halaman_auth, title="Autentikasi", icon="🔒")]).run()
 else:
     render_sidebar()
+    
+    # Menu Dasar Pengguna (User/Petani)
     pages = {
         "Menu Utama": [
             st.Page("pages/dashboard.py",      title="Dashboard",        icon="📊", default=True),
@@ -495,4 +495,11 @@ else:
             st.Page("pages/riwayat.py",        title="Riwayat Diagnosa", icon="📜"),
         ],
     }
+    
+    # Kondisi Tambahan: Menu khusus Admin
+    if st.session_state['user_role'] == 'admin':
+        pages["Panel Administrator"] = [
+            st.Page("pages/admin_kelola.py",  title="Kelola Data Master", icon="⚙️")
+        ]
+        
     st.navigation(pages).run()
